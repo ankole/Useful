@@ -1,0 +1,1423 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Restaurant integration API",
+    "description": "Restaurant integration API",
+    "version": "1-oas3"
+  },
+  "servers": [
+    {
+      "url": "http://koleboshin.ru",
+      "description": "koleboshin.ru"
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Menus",
+      "description": "Меню"
+    },
+    {
+      "name": "StopLists",
+      "description": "Стоп листы"
+    },
+    {
+      "name": "Orders",
+      "description": "Заказы"
+    },
+    {
+      "name": "Adjustments",
+      "description": "Корректировки"
+    },
+    {
+      "name": "Notifications",
+      "description": "Нотификации"
+    }
+  ],
+  "paths": {
+    "/menus/{restaurantId}": {
+      "get": {
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Получение меню.",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "description": "Идентификатор ресторана",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Меню",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Menu"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/stopLists/{restaurantId}": {
+      "get": {
+        "tags": [
+          "StopLists"
+        ],
+        "summary": "Получение продуктов из стоп листа",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "description": "Идентификатор ресторана",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Стоп лист",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/orders/{restaurantId}": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Создание заказа",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "description": "Идентификатор ресторана",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreateOrder"
+        },
+        "responses": {
+          "201": {
+            "description": "Информация о заказе",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderWithId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неуспешное создание заказа",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RejectingReason"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/orders/{restaurantId}/{id}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Получение заказа по идентификатору",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "description": "Идентификатор ресторана",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор заказа",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация о заказе",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderWithRejectingReason"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Обновление заказа",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "description": "Идентификатор ресторана",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор заказа",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UpdateOrder"
+        },
+        "responses": {
+          "200": {
+            "description": "Информация о заказе",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderWithId"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/adjustments/{restaurantId}": {
+      "post": {
+        "tags": [
+          "Adjustments"
+        ],
+        "summary": "Создание корректировки",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "description": "Идентификатор ресторана",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreateAdjustment"
+        },
+        "responses": {
+          "201": {
+            "description": "Ответ на создание корректировки",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/notifications/{restaurantId}": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Отправить нотификацию",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "description": "Идентификатор ресторана",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AddNotification"
+        },
+        "responses": {
+          "201": {
+            "description": "Нотификация",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_201_1"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DateTime": {
+        "type": "string",
+        "format": "date-time ISO8601 (Y-m-d\\TH:i:sO)",
+        "example": "2008-10-17T00:00:00+0300"
+      },
+      "Menu": {
+        "required": [
+          "lastUpdatedAt",
+          "menuItems"
+        ],
+        "type": "object",
+        "properties": {
+          "lastUpdatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "menuItems": {
+            "$ref": "#/components/schemas/MenuItems"
+          }
+        }
+      },
+      "MenuItems": {
+        "required": [
+          "categories",
+          "products"
+        ],
+        "type": "object",
+        "properties": {
+          "schedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Schedule"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          }
+        }
+      },
+      "Category": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "parentId": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 256,
+            "type": "string"
+          }
+        }
+      },
+      "Product": {
+        "required": [
+          "categoryId",
+          "id",
+          "name",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "categoryId": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "price": {
+            "type": "integer",
+            "description": "Цена до 100000 в рублях"
+          },
+          "vat": {
+            "type": "integer",
+            "description": "Ставка НДС (0, 10, 20)"
+          },
+          "imageUrl": {
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "byWeight": {
+            "type": "boolean",
+            "description": "В случае если товар весовой, сервис считает что в поле price передаётся цена за 100 г"
+          },
+          "weight": {
+            "maxLength": 32,
+            "type": "string",
+            "description": "Вес в граммах вида 100/50/30",
+            "example": "100/50/30"
+          },
+          "ingredients": {
+            "type": "array",
+            "description": "Необязательные ингредиенты, клиент может выбрать их в любом количестве",
+            "items": {
+              "$ref": "#/components/schemas/Ingredient"
+            }
+          },
+          "ingredientsGroups": {
+            "type": "array",
+            "description": "Клиент должен выбрать один ингредиент из каждой группы. В рамках одного продукта не должно быть двух групп с одинаковыми именами",
+            "items": {
+              "$ref": "#/components/schemas/IngredientsGroup"
+            }
+          },
+          "energyValue": {
+            "type": "integer",
+            "description": "Значение должно быть в Ккал",
+            "example": 220
+          },
+          "volume": {
+            "maxLength": 32,
+            "type": "string",
+            "description": "Объём жидкости для напитков, значение должно быть в мл",
+            "example": "300"
+          }
+        }
+      },
+      "IngredientsGroup": {
+        "required": [
+          "ingredients",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ingredient"
+            }
+          }
+        }
+      },
+      "Ingredient": {
+        "required": [
+          "id",
+          "name",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "price": {
+            "type": "integer"
+          },
+          "vat": {
+            "type": "integer",
+            "description": "Ставка НДС (0, 10, 20)"
+          }
+        }
+      },
+      "Schedule": {
+        "required": [
+          "categoryIds",
+          "regularSchedules"
+        ],
+        "type": "object",
+        "properties": {
+          "categoryIds": {
+            "type": "array",
+            "description": "Список идентификаторов категорий",
+            "items": {
+              "type": "string"
+            }
+          },
+          "regularSchedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegularSchedules"
+            }
+          }
+        }
+      },
+      "RegularSchedules": {
+        "required": [
+          "from",
+          "till",
+          "weekDay"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "maxLength": 5,
+            "type": "string",
+            "description": "Время начала расписания",
+            "example": "09:00"
+          },
+          "till": {
+            "maxLength": 5,
+            "type": "string",
+            "description": "Время окончания расписания",
+            "example": "21:00"
+          },
+          "weekDay": {
+            "type": "string",
+            "description": "День недели",
+            "example": "monday",
+            "enum": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+              "saturday",
+              "sunday"
+            ]
+          }
+        }
+      },
+      "AdjustmentProduct": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "type": "string",
+            "description": "Идентификатор продукта"
+          }
+        }
+      },
+      "AdjustmentIngredient": {
+        "required": [
+          "id",
+          "productId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "type": "string",
+            "description": "Идентификатор ингредиента"
+          },
+          "productId": {
+            "maxLength": 128,
+            "type": "string",
+            "description": "Идентификатор продукта"
+          }
+        }
+      },
+      "Notification": {
+        "required": [
+          "orderId",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/NotificationType"
+          },
+          "orderId": {
+            "maxLength": 128,
+            "type": "string",
+            "description": "Идентификатор заказа"
+          }
+        }
+      },
+      "NotificationType": {
+        "type": "string",
+        "enum": [
+          "courier_is_close_to_restaurant"
+        ]
+      },
+      "OrderWithRejectingReason": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderWithId"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "rejectingReason": {
+                "$ref": "#/components/schemas/RejectingReason"
+              }
+            },
+            "description": "rejectingReason передается если статус заказа restaurant_cancelled или customer_cancelled"
+          }
+        ]
+      },
+      "OrderWithId": {
+        "allOf": [
+          {
+            "required": [
+              "id"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "maxLength": 128,
+                "type": "string",
+                "description": "Идентификатор заказа"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Order"
+          }
+        ]
+      },
+      "Order": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "shortCode": {
+            "maxLength": 16,
+            "type": "string",
+            "description": "Короткий код заказа"
+          },
+          "pinCode": {
+            "maxLength": 16,
+            "type": "string",
+            "description": "Пин-код заказа"
+          }
+        }
+      },
+      "OrderStatus": {
+        "type": "string",
+        "description": "created - новый заказ, accepted - заказ принят, restaurant_cancelled - отменен рестораном, customer_cancelled - отменен клиентом, picked_up - произведен самовывоз, delivered - заказ доставлен, on_the_way - заказ готов и находится в пути ready - заказ готов cooking - заказ готовится\n",
+        "enum": [
+          "created",
+          "accepted",
+          "restaurant_cancelled",
+          "customer_cancelled",
+          "picked_up",
+          "delivered",
+          "on_the_way",
+          "ready",
+          "cooking"
+        ]
+      },
+      "RejectingReason": {
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/RejectingReasonCode"
+          },
+          "message": {
+            "maxLength": 4096,
+            "type": "string",
+            "description": "Информация об отмене заказа"
+          }
+        },
+        "description": "Причина отмены заказа"
+      },
+      "RejectingReasonCode": {
+        "type": "string",
+        "description": "product_unavailable - продукт недоступен для заказа, too_busy - высокая нагрузка, wrong_minimum_order_value - неправильная минимальная сумма заказа, closed - ресторан закрыт, technical_problem - технические проблемы, no_delivery_to_that_address - не доставляется по этому адресу, address_wrong - неправильный адрес, delivery_rider_unavailable - нет доступных курьеров, customer_not_responding - клиент не отвечает, customer_changed_mind - клиент передумал, duplicate_order - дубликат заказа, test - тест, joke - шутка, other - другое\n",
+        "enum": [
+          "product_unavailable",
+          "too_busy",
+          "wrong_minimum_order_value",
+          "closed",
+          "technical_problem",
+          "no_delivery_to_that_address",
+          "address_wrong",
+          "delivery_rider_unavailable",
+          "customer_not_responding",
+          "customer_changed_mind",
+          "duplicate_order",
+          "test",
+          "joke",
+          "other"
+        ]
+      },
+      "Customer": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "phone": {
+            "maxLength": 16,
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      },
+      "Payment": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/PaymentType"
+          },
+          "requiredMoneyChange": {
+            "maxLength": 8,
+            "type": "string",
+            "description": "Сумма с которой необходимо дать сдачу"
+          }
+        }
+      },
+      "PaymentType": {
+        "type": "string",
+        "description": "cash - оплата наличными, card - оплата картой, online - онлайн оплата",
+        "enum": [
+          "cash",
+          "card",
+          "online"
+        ]
+      },
+      "ExpeditionType": {
+        "type": "string",
+        "enum": [
+          "delivery",
+          "pickup"
+        ]
+      },
+      "Delivery": {
+        "required": [
+          "address",
+          "expectedTime"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedTime": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "Address": {
+        "required": [
+          "city",
+          "coordinates"
+        ],
+        "type": "object",
+        "properties": {
+          "subway": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "region": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "city": {
+            "$ref": "#/components/schemas/City"
+          },
+          "street": {
+            "$ref": "#/components/schemas/Street"
+          },
+          "houseNumber": {
+            "maxLength": 16,
+            "type": "string"
+          },
+          "flatNumber": {
+            "maxLength": 8,
+            "type": "string"
+          },
+          "entrance": {
+            "maxLength": 3,
+            "type": "string"
+          },
+          "intercom": {
+            "maxLength": 16,
+            "type": "string"
+          },
+          "floor": {
+            "maxLength": 2,
+            "type": "string"
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/Coordinates"
+          }
+        }
+      },
+      "City": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "code": {
+            "maxLength": 128,
+            "type": "string"
+          }
+        }
+      },
+      "Street": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "code": {
+            "maxLength": 128,
+            "type": "string"
+          }
+        }
+      },
+      "Coordinates": {
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "maxLength": 11,
+            "type": "string"
+          },
+          "longitude": {
+            "maxLength": 11,
+            "type": "string"
+          }
+        },
+        "description": "Географические координаты в формате Яндекс"
+      },
+      "Pickup": {
+        "required": [
+          "expectedTime",
+          "taker"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedTime": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "taker": {
+            "$ref": "#/components/schemas/Taker"
+          }
+        }
+      },
+      "Taker": {
+        "type": "string",
+        "description": "Кто заберет заказ из ресторана, courier - курьер, customer - клиент",
+        "enum": [
+          "courier",
+          "customer"
+        ]
+      },
+      "OrderProduct": {
+        "required": [
+          "id",
+          "name",
+          "price",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "price": {
+            "type": "integer",
+            "description": "Цена за 1шт продукта со скидкой"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "promotionId": {
+            "maxLength": 40,
+            "type": "string"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderIngredient"
+            }
+          }
+        }
+      },
+      "OrderPromotion": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 40,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 256,
+            "type": "string"
+          }
+        }
+      },
+      "OrderIngredient": {
+        "required": [
+          "id",
+          "name",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "price": {
+            "type": "integer"
+          },
+          "groupName": {
+            "maxLength": 256,
+            "type": "string"
+          }
+        }
+      },
+      "Price": {
+        "required": [
+          "deliveryFee",
+          "discount",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Сумма заказа после применения всех скидок и прочих расчетов"
+          },
+          "deliveryFee": {
+            "type": "integer"
+          },
+          "discount": {
+            "type": "integer",
+            "description": "Сумма скидок для всего заказа"
+          }
+        }
+      },
+      "CallCenter": {
+        "required": [
+          "phone"
+        ],
+        "type": "object",
+        "properties": {
+          "phone": {
+            "maxLength": 16,
+            "type": "string"
+          }
+        }
+      },
+      "Courier": {
+        "required": [
+          "name",
+          "phone"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "phone": {
+            "maxLength": 16,
+            "type": "string"
+          }
+        },
+        "description": "Информация о курьере DC. Доступна при expeditionType=pickup и pickup.taker=courier"
+      },
+      "PartnerDiscountInfo": {
+        "required": [
+          "dcPayment",
+          "partnerPayment",
+          "totalDiscount"
+        ],
+        "type": "object",
+        "properties": {
+          "totalDiscount": {
+            "type": "string",
+            "description": "Стоимость заказа с учетом скидки"
+          },
+          "partnerPayment": {
+            "type": "string",
+            "description": "Сумма скидки, которую заплатит ресторан"
+          },
+          "dcPayment": {
+            "type": "string",
+            "description": "Сумма скидки, которую заплатит Delivery Club"
+          }
+        },
+        "description": "Информация о скидках. Доступна только при включенной настройке передачи скидок"
+      },
+      "StopListItem": {
+        "required": [
+          "id",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/StopListItemType"
+          },
+          "id": {
+            "maxLength": 128,
+            "type": "string",
+            "description": "Идентификатор сущности для блокировки"
+          },
+          "name": {
+            "maxLength": 256,
+            "type": "string"
+          }
+        }
+      },
+      "StopListItemType": {
+        "type": "string",
+        "enum": [
+          "product",
+          "ingredient",
+          "category"
+        ]
+      },
+      "inline_response_200": {
+        "required": [
+          "stopList"
+        ],
+        "type": "object",
+        "properties": {
+          "stopList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StopListItem"
+            }
+          }
+        }
+      },
+      "inline_response_201": {
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "type": "string",
+            "description": "Идентификатор корректировки"
+          }
+        }
+      },
+      "inline_response_201_1": {
+        "allOf": [
+          {
+            "required": [
+              "id"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "maxLength": 128,
+                "type": "string",
+                "description": "Идентификатор нотификации"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Notification"
+          }
+        ]
+      }
+    },
+    "responses": {
+      "UnsuccessfulResponse": {
+        "description": "Server error"
+      },
+      "MenuResponse": {
+        "description": "Меню",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Menu"
+            }
+          }
+        }
+      },
+      "CreateAdjustmentResponse": {
+        "description": "Ответ на создание корректировки",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/inline_response_201"
+            }
+          }
+        }
+      },
+      "NotificationResponse": {
+        "description": "Нотификация",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/inline_response_201_1"
+            }
+          }
+        }
+      },
+      "GetOrderResponse": {
+        "description": "Информация о заказе",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrderWithRejectingReason"
+            }
+          }
+        }
+      },
+      "OrderResponse": {
+        "description": "Информация о заказе",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrderWithId"
+            }
+          }
+        }
+      },
+      "UnsuccessfulCreateOrderResponse": {
+        "description": "Неуспешное создание заказа",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RejectingReason"
+            }
+          }
+        }
+      },
+      "StopListResponse": {
+        "description": "Стоп лист",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/inline_response_200"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "RestaurantId": {
+        "name": "restaurantId",
+        "in": "path",
+        "description": "Идентификатор ресторана",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "OrderId": {
+        "name": "id",
+        "in": "path",
+        "description": "Идентификатор заказа",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "requestBodies": {
+      "CreateAdjustment": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "required": [
+                "amount",
+                "orderId",
+                "orderTotalPrice"
+              ],
+              "type": "object",
+              "properties": {
+                "orderId": {
+                  "maxLength": 128,
+                  "type": "string",
+                  "description": "Идентификатор заказа"
+                },
+                "reason": {
+                  "maxLength": 4096,
+                  "type": "string",
+                  "description": "Причина корректировки"
+                },
+                "products": {
+                  "type": "array",
+                  "description": "Список удаленных продуктов",
+                  "items": {
+                    "$ref": "#/components/schemas/AdjustmentProduct"
+                  }
+                },
+                "ingredients": {
+                  "type": "array",
+                  "description": "Список удаленных ингредентов",
+                  "items": {
+                    "$ref": "#/components/schemas/AdjustmentIngredient"
+                  }
+                },
+                "amount": {
+                  "type": "integer",
+                  "description": "Сумма корректировки"
+                },
+                "orderTotalPrice": {
+                  "type": "integer",
+                  "description": "Сумма заказа после применения корректировки"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "AddNotification": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Notification"
+            }
+          }
+        },
+        "required": true
+      },
+      "CreateOrder": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "required": [
+                "callCenter",
+                "createdAt",
+                "customer",
+                "expeditionType",
+                "originalOrderId",
+                "payment",
+                "personsQuantity",
+                "preOrder",
+                "price",
+                "products"
+              ],
+              "type": "object",
+              "properties": {
+                "originalOrderId": {
+                  "maxLength": 128,
+                  "type": "string",
+                  "description": "Идентификатор заказа созданный на стороне агрегатора"
+                },
+                "preOrder": {
+                  "type": "boolean"
+                },
+                "createdAt": {
+                  "$ref": "#/components/schemas/DateTime"
+                },
+                "customer": {
+                  "$ref": "#/components/schemas/Customer"
+                },
+                "payment": {
+                  "$ref": "#/components/schemas/Payment"
+                },
+                "expeditionType": {
+                  "$ref": "#/components/schemas/ExpeditionType"
+                },
+                "delivery": {
+                  "$ref": "#/components/schemas/Delivery"
+                },
+                "pickup": {
+                  "$ref": "#/components/schemas/Pickup"
+                },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderProduct"
+                  }
+                },
+                "promotions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderPromotion"
+                  }
+                },
+                "comment": {
+                  "type": "string"
+                },
+                "price": {
+                  "$ref": "#/components/schemas/Price"
+                },
+                "personsQuantity": {
+                  "type": "integer"
+                },
+                "callCenter": {
+                  "$ref": "#/components/schemas/CallCenter"
+                },
+                "courier": {
+                  "$ref": "#/components/schemas/Courier"
+                },
+                "partnerDiscountInfo": {
+                  "$ref": "#/components/schemas/PartnerDiscountInfo"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "UpdateOrder": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "required": [
+                "status"
+              ],
+              "type": "object",
+              "properties": {
+                "status": {
+                  "$ref": "#/components/schemas/OrderStatus"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}
