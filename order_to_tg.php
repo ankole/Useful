@@ -1,4 +1,8 @@
 <?php
+
+$token = ' ТОКЕН ';
+$recipient = ' ЧАТ ';
+
 switch ($modx->event->name) {
   case 'msOnChangeOrderStatus':
     if ($status == 1) {
@@ -14,8 +18,6 @@ switch ($modx->event->name) {
             ...
         ];
         $payid = (string)$order->Payment->id;
-        $token = ' ТОКЕН ';
-        $recipient = ' ЧАТ ';
         $messege = "На сайте сделан заказ №" . $order->get('num');
 
         $promocode = $_SESSION['promocode'];
@@ -59,6 +61,20 @@ switch ($modx->event->name) {
         }
 
         $_SESSION['promocode'] = '';
+
+    } else if($status == 2) {
+
+        $messege = "На сайте оплачен заказ №" . $order->get('num');
+
+        // Tg bot V2
+        require_once( MODX_ASSETS_PATH . 'vendor/autoload.php' );
+        try {
+        	$bot = new \TelegramBot\Api\BotApi( $token );
+        	$bot->sendMessage( $recipient, $messege );
+        } catch (Exception $e) {
+        	file_get_contents("https://api.telegram.org/bot$token/sendMessage?chat_id=$recipient&parse_mode=html&text=".urlencode($messege));
+        }
+
     }
     break;
 }
